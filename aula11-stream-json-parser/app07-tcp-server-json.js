@@ -18,11 +18,15 @@ console.log('Waiting for connections')
  * @param {socket} socket 
  */
 function onNewConnection(socket) {
-    
     console.log('New connection')
-    
     args.forEach(filename => {
-        socket.write('Connnection established! Watching ' + filename + '\n\r')
+        const msg = {
+            'type': 'watching',
+            'file': filename,
+            'timestamp':Date.now()
+        }
+
+        socket.write(JSON.stringify(msg) + '\n\r')
         fs.watch(filename, onFileChanged.bind(null, socket, filename))
     })
 
@@ -33,7 +37,12 @@ function onNewConnection(socket) {
  * @param {Socket} socket 
  */
 function onFileChanged(socket, filename) {
-    socket.write('File ' + filename + ' changed at ' + new Date() + '\n\r')
+    const msg = {
+        'type': 'changed',
+        'file': filename,
+        'timestamp':Date.now()
+    }
+    socket.write(JSON.stringify(msg) + '\n\r')
 }
 
 function onConnectionClose() {
