@@ -29,17 +29,17 @@ describe('Bundles API', () => {
                 const id = data._id
                 return Promise.all([ // P<[String, Bundle]>
                     Promise.resolve(id), 
-                    service.get(id)]) 
+                    service.getBundle(id)]) 
             })
             .then(([id, bundle]) => {
                 assert.equal(bundle.name, 'action')
-                return service.delete(id).then(id)
+                return service.delete(id).then(() => id)
             })
             .catch(() => {
                 assert.fail('bundle delete failed!')
                 done()
             })
-            .then(id => service.get(id))
+            .then(id => service.getBundle(id))
             .then(() => {
                 assert.fail('bundle not deleted')
                 done()
@@ -48,23 +48,27 @@ describe('Bundles API', () => {
     })
     it('should create a new bundle object and add it a book!', done => {
         const service = bundles.init(es)
-        service.create('action', (err, data) => {
-            if(!data._id)
-                assert.fail('Missing _id on bundle creation')
-            const id = data._id
-            service.addBook(id, 'pg2680', (err) => {
-                service.get(id, (err, bundle) => {
-                    assert.equal(bundle.name, 'action')
-                    assert.equal(bundle.books[0].title, 'Meditations')
-                    service.delete(id, (err) => {
-                        if(err) assert.fail('bundle delete failed!')
-                        service.get(id, (err) => {
-                            if(!err) assert.fail('bundle not deleted')
-                            done()
-                        })
-                    })
-                })            
+        service
+            .create('action')
+            .then(data => {
+                if(!data._id)
+                    assert.fail('Missing _id on bundle creation')
+                return data._id
             })
-        })
+            .then(id => service
+                .addBook(id, 'pg2680')
+                .then(() => id)
+            )
+            .catch(() => assert.fail('Book not added to Bundle!!!'))
+            .then(id => Promise.all([Promise.resolve(id), service.getBundle(id)]))
+            .then(([id, bundle]) => {
+                assert.equal(bundle.name, 'action')
+                assert.equal(bundle.books[0].title, 'Meditations')
+                return service.delete(id).then(() => id)
+            })
+            .catch(() => assert.fail('bundle delete failed!'))
+            .then(id => service.getBundle(id))
+            .then(() => assert.fail('bundle not deleted'))
+            .catch(() => done())
     })
 })
