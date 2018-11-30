@@ -1,7 +1,5 @@
 'use strict'
 
-const parallel = require('./parallel')
-
 class Bundles {
 
     constructor(es) {
@@ -13,20 +11,28 @@ class Bundles {
         return new Bundles(es)    
     }
 
-    get(id, cb) {
+    getBundle(id) {
+        /* !!!! DESNECESSÁRIO !!!! => Implementação síncrona
+        return new Promise((resolve, reject) =>{
+            const bundle = bundles[id]
+            if(!bundle) 
+                return reject({statusCode: 404})
+            resolve(bundle)
+        })
+        */
         const bundle = bundles[id]
         if(!bundle) 
-            return cb({code: 404})
-        cb(null, bundle)
+            return Promise.reject({statusCode: 404})
+        return Promise.resolve(bundle)
     }
-    delete(id, cb) {
+    delete(id) {
         const bundle = bundles[id]
         if(!bundle) 
-            return cb({code: 404})
+            return Promise.reject({statusCode: 404})
         delete bundles[id]
-        cb(null)
+        return Promise.resolve()
     }
-    create(name, cb) {
+    create(name) {
         const bundle = {
             'name' : name,
             'books': []
@@ -35,27 +41,26 @@ class Bundles {
         bundles[id] = bundle
         count++
         const data = {'_id': id}
-        cb(null, data)
+        return Promise.resolve(data)
     }
     /**
      * 
      * @param {*} id Bundle id
      * @param {*} pgid Book id -- project gutenberg id
-     * @param {*} cb callback
      */
-    addBook(id, pgid, cb){
+    addBook(id, pgid){
         const bundle = bundles[id]
         const book = books[pgid]
         if(!bundle || !book) 
-            return cb({code: 404})
+            return Promise.reject({statusCode: 404})
         const idx = bundle.books.findIndex(b => b.id == pgid)
         if(idx >= 0) 
-            return cb(null)
+            return Promise.resolve()
         bundle.books.push({
             'id': pgid,
             'title': book.title
         })
-        cb(null)
+        return Promise.resolve()
     }
 }
 

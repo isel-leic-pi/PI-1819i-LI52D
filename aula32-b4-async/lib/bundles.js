@@ -60,11 +60,34 @@ class Bundles {
      * @param {*} id Bundle identifier
      * @param {*} pgid Book identifier
      */
-    addBook(id, pgid){
+    async addBook(id, pgid){
+        const [bundle, book] = await Promise.all([
+            this.getBundle(id), 
+            this.getBook(pgid)
+        ])
+        this.addBookToBundle(bundle, book, pgid)
+        return this.updateBundle(bundle, id)
+        /* BEM
         return Promise
             .all([this.getBundle(id), this.getBook(pgid)])
             .then(([bundle, book]) => this.addBookToBundle(bundle, book, pgid))
             .then(bundle => this.updateBundle(bundle, id))
+        */
+        /** MAL*/
+        /*
+        const bundle = await this.getBundle(id)
+        const book = await this.getBook(pgid)
+        this.addBookToBundle(bundle, book, pgid)
+        return this.updateBundle(bundle, id)
+        */
+        /** MAL <=>*/
+        /*
+        return this
+            .getBundle(id)
+            .then(bundle => Promise.all(bundle, this.getBook(pgid)))
+            .then(([bundle, book]) => this.addBookToBundle(bundle, book, pgid))
+            .then(bundle => this.updateBundle(bundle, id))
+        */
     }
 }
 

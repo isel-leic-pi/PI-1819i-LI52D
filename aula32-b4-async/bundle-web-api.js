@@ -17,33 +17,33 @@ module.exports = (app, bundles) => {
      */
     function postBundle(req, res, next) {
         const name = req.query.name
-        bundles.create(name, (err, data) => {
-            if(err) return next(err)
-            res
-                .status(201)
-                .json(data)
-        })
+        bundles
+            .create(name)
+            .catch(err => next(err))
+            .then(data => res.status(200).json(data))
     }
 
     /**
      * GET /api/bundle/<id> -- lê um bundle com o id
      */
-    function getBundle(req, res, next) {
-        bundles.get(req.params.bundleId, (err, bundle) => {
-            if(err) return next(err)
+    async function getBundle(req, res, next) {
+        try{
+            const bundle = await bundles.getBundle(req.params.bundleId)
             res.json(bundle)
-        })
+        } catch(err) {
+            next(err)
+        }
     }
 
     function resourceNotFound(req, res, next) {
         next({
-            'code': 404,
+            'statusCode': 404,
             'message': 'Resource Not Found'
         })
     }
 
     function errorHandler(err, req, res, next) {
-        res.statusCode = err.code
+        res.statusCode = err.statusCode
         res.json(err)
     }
 }
