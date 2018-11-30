@@ -61,10 +61,11 @@ describe('Bundles API', () => {
             )
             .catch(() => assert.fail('Book not added to Bundle!!!'))
             .then(id => Promise.all([Promise.resolve(id), service.getBundle(id)]))
-            .then(([id, bundle]) => {
+            .then(async ([id, bundle]) => {
                 assert.equal(bundle.name, 'action')
                 assert.equal(bundle.books[0].title, 'Meditations')
-                return service.delete(id).then(() => id)
+                await service.delete(id);
+                return id;
             })
             .catch(() => assert.fail('bundle delete failed!'))
             .then(id => service.getBundle(id))
