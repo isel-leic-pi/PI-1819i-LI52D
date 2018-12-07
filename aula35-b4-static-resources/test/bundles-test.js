@@ -19,35 +19,23 @@ describe('Bundles API', () => {
         done()
     })
 
-    it('should create a new bundle object and get it and delete it!', done => {
+    it('should create a new bundle object and get it and delete it!', async () => {
         const service = bundles.init(es)
-        const bundle = service.create('action')
-        bundle.catch((err) => {
-                assert.fail(err)
-            })
-        bundle.then(data => {
-                if(!data._id)
-                    assert.fail('Missing _id on bundle creation')
-                const id = data._id
-                return Promise.all([ // P<[String, Bundle]>
-                    Promise.resolve(id), 
-                    service.getBundle(id)]) 
-            })
-            .then(([id, bundle]) => {
-                assert.equal(bundle.name, 'action')
-                return service.delete(id).then(() => id)
-            })
-            .catch(() => {
-                assert.fail('bundle delete failed!')
-            })
-            .then(id => service.getBundle(id))
-            .then(() => {
-                assert.fail('bundle not deleted')
-                done()
-            })
-            .catch((err) => {
-                done()
-            })
+        const data = await service.create('action')
+        if(!data._id)
+            assert.fail('Missing _id on bundle creation')
+        const id = data._id
+        const bundle = await service.getBundle(id)
+        assert.equal(bundle.name, 'action')
+        await service.delete(id)
+        try{
+            await bundle.getBundle(id)
+        } catch(err) {
+            // It is ok to fail when trying to get a deleted bundle
+            return
+        }
+        // It should not succeed getting the bundle. Otherwise it means that bundle was not removed.
+        assert.fail('bundle not deleted')
     })
     it('should create a new bundle object and add it a book!', done => {
         const service = bundles.init(es)
