@@ -3,7 +3,7 @@
 const http = require('http')
 const express = require('express')
 const morgan = require('morgan')
-const Bundles = require('./lib/bundles-mock')
+const Bundles = require('./lib/bundles')
 const staticResources = require('./lib/static-resources')
 
 const es = {

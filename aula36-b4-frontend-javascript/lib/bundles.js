@@ -13,6 +13,21 @@ class Bundles {
         return new Bundles(es)    
     }
 
+    /**
+     * E.g. http://localhost:9200/books/_search?q=(authors:Twain)AND(title:Tom)
+     * @param {*} title 
+     * @param {*} authors 
+     */
+    searchBook(title, authors){
+        if(!authors) authors='*'
+        if(!title) title = '*'
+        const query = `q=(authors:${authors})AND(title:${title})`
+        return rp
+            .get(`${this.urlBooks}_search?${query}`)
+            .then(body => JSON.parse(body))
+            .then(resp => resp.hits.hits.map(b => b._source))
+    }
+
     getBundle(id) {
         return rp
             .get(`${this.urlBundles}${id}`)

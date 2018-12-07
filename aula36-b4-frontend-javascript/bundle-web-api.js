@@ -9,8 +9,21 @@ module.exports = (app, bundles) => {
         throw new Error('You must provide a Bundles instance as second argument')
     app.post('/api/bundle', postBundle)
     app.get('/api/bundle/:bundleId', getBundle)
+    app.get('/api/book/search', bookSearch)
     app.use(resourceNotFound)
     app.use(errorHandler)
+
+    /**
+     * GET /api/book/search?title=<title>&authors=<authors>
+     */
+    function bookSearch(req, resp, next) {
+        const title = req.query.title
+        const authors = req.query.authors
+        bundles
+            .searchBook(title, authors)
+            .then(books => resp.json(books))
+            .catch(next)
+    }
 
     /**
      * POST /api/bundle?name=<name> -- insere um novo bundle
