@@ -19,7 +19,7 @@ const app = express()
  * Add middleware
  */
 app.use(morgan('dev'))
-app.use(express.static('public'))
+app.use(express.static('dist'))
 require('./bundle-web-api')(app, bundles)
 /**
  * Start HTTP server
