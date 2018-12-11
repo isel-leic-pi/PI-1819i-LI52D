@@ -13,18 +13,28 @@ window.onload = () => {
         ev.preventDefault()
         fetch(`http://localhost:3000/api/book/search?title=${inputTitle.value}&authors=${inputAuthors.value}`)
             .then(resp => resp.json())
-            .then(books => searchResults(books[0]))
+            .then(books => searchResults(books))
             .then(view => divResults.innerHTML = view)
     }
 
-    function searchResults(book) {
-        const {title, authors, subjects} = book
-        return `
-            <ul class="list-group">
-                <li class="list-group-item">Title: ${title}</li>
-                <li class="list-group-item">Authors: ${authors}</li>
-                <li class="list-group-item">Subjects: ${subjects}</li>
-            </ul>
-        `
-    }
+    const searchResults = Handlebars.compile(`
+        <table>
+            <thead>
+            <tr>            
+                <th>Tile</th>
+                <th>Authors</th>
+                <th>Subjects</th>
+            </tr>
+            <body>
+                {{#each .}}
+                    <tr>
+                        <td>{{title}}</td>
+                        <td>{{authors}}</td>
+                        <td>{{subjects}}</td>
+                    </tr>
+                {{/each}}
+            </body>
+            </thead>
+        </table>
+    `)
 }
