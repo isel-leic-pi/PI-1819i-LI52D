@@ -1,7 +1,7 @@
 'use strict'
 
-const Handlebars = require('./../node_modules/handlebars/dist/handlebars.js')
-const bookSearchResultsTemplate = require('./bookSearchResults.hbs')
+const Handlebars = require('handlebars/dist/handlebars')
+const bookSearchResultsTemplate = require('./../views/bookSearchResults.hbs')
 const searchResults = Handlebars.compile(bookSearchResultsTemplate)
 
 document

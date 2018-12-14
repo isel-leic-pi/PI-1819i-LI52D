@@ -3,23 +3,12 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-    'entry': {
-        index: './app/entry.js'
-    },
+    'entry': './app/js/entry.js',
     mode: 'development',
     devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({
-            template: './app/b4index.html',
-            inject: true,
-            chunks: ['index'],
-            filename: 'b4index.html'
-        }),
-        new HtmlWebpackPlugin({
-            template: './app/bookSearch.html',
-            inject: true,
-            chunks: ['index'],
-            filename: 'bookSearch.html'
+            title: 'b4app'
         })
     ],
     module: {
