@@ -1,6 +1,9 @@
 'use strict'
 
 require('./../../node_modules/bootstrap/dist/css/bootstrap.css')
+const b4index = require('./b4index')
+const booksSearch = require('./bookSearch')
+const bundles = require('./bundles')
 
 const mainView = require('./../views/main.html')
 
@@ -14,15 +17,24 @@ function showView() {
     const path = window.location.hash
     switch(path) {
         case '#b4index':
-            divMain.innerHTML = require('./../views/b4index.html')
+            b4index(divMain)
             break
         case '#bookSearch':
-            divMain.innerHTML = require('./../views/bookSearch.html')
+            booksSearch(divMain)
             break
         case '#bundles':
-            divMain.innerHTML = require('./../views/bundles.html')
+            bundles(divMain)
             break
         default:
             divMain.innerHTML = 'Resource Not Found!'
     }
+    updateNav(path)
+}
+
+function updateNav(path) {
+    const current = document.querySelector('a.active')
+    if(current) current.classList.remove('active')
+    const nav = document.getElementById('nav' + path)
+    if(!nav) return
+    nav.classList.add('active')
 }

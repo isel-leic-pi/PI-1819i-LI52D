@@ -4,7 +4,9 @@ const http = require('http')
 const express = require('express')
 const morgan = require('morgan')
 const Bundles = require('./lib/bundles')
-const staticResources = require('./lib/static-resources')
+const webpack = require('webpack')
+const webpackMiddleware = require('webpack-dev-middleware')
+const webpackConfig = require('./webpack.config.js')
 
 const es = {
     host: 'localhost',
@@ -19,7 +21,7 @@ const app = express()
  * Add middleware
  */
 app.use(morgan('dev'))
-app.use(express.static('dist'))
+app.use(webpackMiddleware(webpack(webpackConfig)))
 require('./bundle-web-api')(app, bundles)
 /**
  * Start HTTP server
