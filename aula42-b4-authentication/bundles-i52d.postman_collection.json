@@ -1,0 +1,143 @@
+{
+	"info": {
+		"_postman_id": "f38eb818-484c-48d3-ac23-0197b09caca9",
+		"name": "bundles-i52d",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get illegal bundle",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e37ed7c4-141b-45d1-879b-d6a065d33784",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/bundle/illegalId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"bundle",
+						"illegalId"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a new bundle",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "72118373-aa57-4ec3-b6b1-a7ddadcf0266",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response body should contain a _id property\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData._id);",
+							"    pm.globals.set(\"bundleId\", jsonData._id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/bundle?name=foo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"bundle"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "foo"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a bundle",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e37ed7c4-141b-45d1-879b-d6a065d33784",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Should return a bundle with empty array\", function () {",
+							"    const bundle = pm.response.json();",
+							"    pm.expect(bundle).to.eql({",
+							"        \"name\": \"foo\",",
+							"        \"books\": []",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/bundle/{{bundleId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"bundle",
+						"{{bundleId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
