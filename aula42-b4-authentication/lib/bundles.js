@@ -5,6 +5,7 @@ const rp = require('request-promise')
 class Bundles {
 
     constructor(es) {
+        this.bundlesRefresh = `http://${es.host}:${es.port}/${es.bundles_index}/_refresh`
         this.urlBooks =  `http://${es.host}:${es.port}/${es.books_index}/book/`
         this.urlBundles = `http://${es.host}:${es.port}/${es.bundles_index}/bundle/`
     }
@@ -38,15 +39,31 @@ class Bundles {
             .delete(`${this.urlBundles}${id}`)
             .then(body => JSON.parse(body))
     }
-    create(name) {
+    async create(userId, name) {
         const options = {
-            url: `${this.urlBundles}`,
-            json: true,
-            body: { 'name': name, 'books': [] }
+            'uri': this.urlBundles,
+            'json': true,
+            'body': { 'user_id': userId, 'name': name, 'books': []}
         }
-        return rp
-            .post(options)
+        const resp = await rp.post(options)
+        await rp.post(this.bundlesRefresh)
+        return resp
     }
+
+    getAll(userId) {
+        const query = `user_id:${userId}`
+        const url = `${this.urlBundles}_search?q=${query}`
+        return rp
+            .get(url)
+            .then(body => JSON.parse(body).hits.hits)
+            .then(arr => arr.map(item => { return {
+                '_id': item._id,
+                'name': item._source.name,
+                'books': item._source.books
+            }}))
+
+    }
+
     getBook(pgid){
         return rp
             .get(`${this.urlBooks}${pgid}`)

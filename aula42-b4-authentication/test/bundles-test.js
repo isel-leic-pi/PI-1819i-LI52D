@@ -1,5 +1,7 @@
 'use strict'
 
+const expect = require('chai').expect
+const should = require('chai').should()
 const assert = require('assert')
 const bundles = require('./../lib/bundles.js')
 
@@ -32,7 +34,7 @@ describe('Bundles API', () => {
 
     it('should create a new bundle object and get it and delete it!', async () => {
         const service = bundles.init(es)
-        const data = await service.create('action')
+        const data = await service.create('zemanel', 'action')
         if(!data._id)
             assert.fail('Missing _id on bundle creation')
         const id = data._id
@@ -48,11 +50,23 @@ describe('Bundles API', () => {
         // It should not succeed getting the bundle. Otherwise it means that bundle was not removed.
         assert.fail('bundle not deleted')
     })
-
+    it('Should get all bundles from user', async () => {
+        const bundle = bundles.init(es)
+        const resp = await bundle.create('zemanel', 'foo')
+        should.exist(resp)
+        expect(resp)
+            .to.be.an('object')
+            .and.have.a.property('_id')
+        const arr = await bundle.getAll('zemanel')
+        expect(arr)
+            .to.be.an('array')
+            .that.deep.include({'name': 'foo', '_id': resp._id, 'books': []})
+        await bundle.delete(resp._id)
+    })
     it('should create a new bundle object and add it a book!', done => {
         const service = bundles.init(es)
         service
-            .create('action')
+            .create('zemanel', 'action')
             .catch((err) => {
                 assert.fail(err)
                 done()

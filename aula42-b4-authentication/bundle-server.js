@@ -7,6 +7,10 @@ const Bundles = require('./lib/bundles')
 const webpack = require('webpack')
 const webpackMiddleware = require('webpack-dev-middleware')
 const webpackConfig = require('./webpack.config.js')
+const bodyParser = require('body-parser')
+const expressSession = require('express-session')
+const authWebApi = require('./auth-web-api')
+const bundleWebApi = require('./bundle-web-api')
 
 const es = {
     host: 'localhost',
@@ -21,8 +25,12 @@ const app = express()
  * Add middleware
  */
 app.use(morgan('dev'))
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+app.use(expressSession({secret: 'keyboard cat', resave: false, saveUninitialized: true }))
 app.use(webpackMiddleware(webpack(webpackConfig)))
-require('./bundle-web-api')(app, bundles)
+authWebApi(app)
+bundleWebApi(app, bundles)
 /**
  * Start HTTP server
  */
