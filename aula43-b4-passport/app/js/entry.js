@@ -1,7 +1,9 @@
 'use strict'
 
 require('./../../node_modules/bootstrap/dist/css/bootstrap.css')
+require('./../../node_modules/bootstrap/dist/js/bootstrap.js')
 const Handlebars = require('handlebars/dist/handlebars')
+const util = require('./util')
 const b4index = require('./b4index')
 const booksSearch = require('./bookSearch')
 const bundles = require('./bundles')
@@ -15,11 +17,20 @@ const divMain = document.getElementById('divMain')
 const divNavbar = document.getElementById('divNavbar')
 
 showNavbar()
-window.onload = showView
-window.onhashchange = showView
+    .then(() => {
+        window.onload = showView
+        window.onhashchange = showView
+        showView()
+        util.showAlert('b4app is running', 'success')     
+    })
 
-function showNavbar() {
-    divNavbar.innerHTML = navbarView({auth: false})
+async function showNavbar() {
+    const resp = await fetch('/api/auth/session')
+    const body = await resp.json() // body => {auth, fullname}
+    if(resp.status != 200) {
+        util.showAlert(JSON.stringify(body))
+    }   
+    divNavbar.innerHTML = navbarView(body)
 }
 
 function showView() {
@@ -29,7 +40,7 @@ function showView() {
             b4index(divMain)
             break
         case '#login':
-            login(divMain)
+            login(divMain, showNavbar)
             break
         case '#bookSearch':
             booksSearch(divMain)

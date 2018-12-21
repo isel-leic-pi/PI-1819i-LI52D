@@ -1,7 +1,7 @@
 'use strict'
 
 const passport = require('passport')
-const auth = require('./lib/auth.js')
+const auth = require('./lib/auth-mock.js')
 
 const es = {
     host: 'localhost',
@@ -28,7 +28,7 @@ module.exports = (app) => {
     function getSession(req, resp, next) {
         const fullname = req.isAuthenticated() ? req.user.fullname : undefined
         resp.json({
-            'auth': req.isAuthenticated(),
+            'auth': req.isAuthenticated(), // <=> req.user != undefined
             'fullname': fullname
         })
     }
@@ -44,6 +44,7 @@ module.exports = (app) => {
             .catch(err => next(err))
     }
     function logout(req, resp, next) {
+        // TO DO: chamar o req.logout()
         next({'statusCode': 500, 'err': 'Not implemented!'})
     }
     function signup(req, resp, next) {

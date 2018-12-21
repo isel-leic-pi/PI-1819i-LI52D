@@ -32,7 +32,7 @@ module.exports = (app, bundles) => {
     function postBundle(req, res, next) {
         if(!req.user || !req.user._id)
             next({'statusCode': 401, err: 'Unauthenticated user cannot create bundles!'})
-        const name = req.query.name
+        const name = req.body.name
         const userId = req.user._id
         bundles
             .create(userId, name)

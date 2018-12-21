@@ -14,7 +14,7 @@ module.exports = {
 function showAlert(message, type = 'danger') {
     document
         .getElementById('divAlerts')
-        .insertAdjacentHTML('beforeend', alertView({type, message}))
+        .insertAdjacentHTML('beforeend', alertView({type, message})) // <=> .innerHTML += 
 }
 
 /**

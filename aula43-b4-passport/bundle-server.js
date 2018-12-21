@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(expressSession({secret: 'keyboard cat', resave: false, saveUninitialized: true }))
 app.use(webpackMiddleware(webpack(webpackConfig)))
-// authWebApi(app)
+authWebApi(app)
 bundleWebApi(app, bundles)
 /**
  * Start HTTP server

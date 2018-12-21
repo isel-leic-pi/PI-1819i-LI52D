@@ -35,8 +35,8 @@ module.exports = (divMain, getAuthAndInsertNavbar) => {
                     const body = await resp.json()
                     throw `${resp.status}: ${JSON.stringify(body)}`
                 }
-                window.location.hash = '#b4index'
                 getAuthAndInsertNavbar()
+                    .then(() => window.location.hash = '#b4index')
             })
             .catch(err => util.showAlert(err, 'danger'))
     }
@@ -56,8 +56,8 @@ module.exports = (divMain, getAuthAndInsertNavbar) => {
         const resp = await fetch(url, options)
         try{
             if(resp.status == 200){
+                await getAuthAndInsertNavbar()
                 window.location.hash = '#b4index'
-                getAuthAndInsertNavbar()
             } else {
                 const body = await resp.json()
                 util.showAlert(`${resp.status} ${resp.statusText}: ${JSON.stringify(body)}`)
