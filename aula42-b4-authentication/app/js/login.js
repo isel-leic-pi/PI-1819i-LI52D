@@ -5,11 +5,9 @@ const loginView = require('./../views/login.html')
 
 module.exports = (divMain, getAuthAndInsertNavbar) => {
     divMain.innerHTML = loginView
-
     const txtFullname = document.getElementById('inputFullname')
     const txtPassword = document.getElementById('inputPassword')
     const txtUsername = document.getElementById('inputUsername')
-
     document
         .getElementById('buttonSignup')
         .addEventListener('click', signupHander)
@@ -32,7 +30,11 @@ module.exports = (divMain, getAuthAndInsertNavbar) => {
             }
         }
         fetch(url, options)
-            .then(() => {
+            .then(async (resp) => {
+                if(resp.status != 201 && resp.status != 200){
+                    const body = await resp.json()
+                    throw `${resp.status}: ${JSON.stringify(body)}`
+                }
                 window.location.hash = '#b4index'
                 getAuthAndInsertNavbar()
             })
